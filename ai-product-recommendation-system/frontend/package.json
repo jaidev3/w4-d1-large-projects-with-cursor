@@ -1,0 +1,40 @@
+{
+  "name": "ai-product-recommendation-frontend",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@hookform/resolvers": "^3.3.1",
+    "@mui/icons-material": "^5.14.1",
+    "@mui/material": "^5.13.7",
+    "@reduxjs/toolkit": "^1.9.5",
+    "axios": "^1.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.45.4",
+    "react-redux": "^8.0.5",
+    "react-router-dom": "^6.14.1",
+    "zod": "^3.22.2"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.14",
+    "@types/react-dom": "^18.2.6",
+    "@typescript-eslint/eslint-plugin": "^6.7.0",
+    "@typescript-eslint/parser": "^6.7.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "eslint": "^8.49.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^2.8.8",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.9"
+  }
+} 
