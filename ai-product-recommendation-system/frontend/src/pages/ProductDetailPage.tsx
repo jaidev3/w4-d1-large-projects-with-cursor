@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -34,6 +34,9 @@ import {
   Autorenew as ReturnIcon,
 } from '@mui/icons-material';
 import { useGetProductQuery } from '../store/productsApi';
+import { useInteractionTracking } from '../store/interactionsApi';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -69,8 +72,27 @@ const ProductDetailPage: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedTab, setSelectedTab] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [userRating, setUserRating] = useState<number | null>(null);
 
   const { data: product, isLoading, error } = useGetProductQuery(productId);
+  const { trackView, trackLike, trackAddToCart, trackRating } = useInteractionTracking();
+  const currentUser = useSelector((state: RootState) => state.auth.user);
+
+  // Track detailed view when component mounts or product changes
+  useEffect(() => {
+    if (product && currentUser) {
+      trackView(product.id, {
+        view_type: 'detail',
+        category: product.category,
+        subcategory: product.subcategory,
+        price: product.price,
+        is_featured: product.is_featured,
+        is_on_sale: product.is_on_sale,
+        source: 'product_detail_page',
+        tab_viewed: selectedTab,
+      });
+    }
+  }, [product, currentUser, trackView, selectedTab]);
 
   const handleQuantityChange = (change: number) => {
     const newQuantity = Math.max(1, Math.min(quantity + change, product?.quantity_in_stock || 1));
@@ -78,13 +100,55 @@ const ProductDetailPage: React.FC = () => {
   };
 
   const handleAddToCart = () => {
-    // TODO: Implement cart functionality
+    if (!product || !currentUser) return;
+    
+    // Track add to cart interaction
+    trackAddToCart(product.id, quantity, {
+      category: product.category,
+      subcategory: product.subcategory,
+      price: product.price,
+      is_on_sale: product.is_on_sale,
+      sale_price: product.sale_price,
+      quantity_selected: quantity,
+      source: 'product_detail_page',
+    });
+    
+    // TODO: Implement actual cart functionality
     console.log('Add to cart:', { product, quantity });
   };
 
   const handleToggleFavorite = () => {
-    setIsFavorite(prev => !prev);
-    // TODO: Implement favorites functionality
+    if (!product || !currentUser) return;
+    
+    const newFavoriteStatus = !isFavorite;
+    setIsFavorite(newFavoriteStatus);
+    
+    // Track like interaction (only when liking)
+    if (newFavoriteStatus) {
+      trackLike(product.id, {
+        category: product.category,
+        subcategory: product.subcategory,
+        price: product.price,
+        rating: product.rating,
+        source: 'product_detail_page',
+      });
+    }
+    
+    // TODO: Implement actual favorites functionality
+  };
+
+  const handleRatingChange = (event: React.SyntheticEvent, newValue: number | null) => {
+    if (!product || !currentUser || newValue === null) return;
+    
+    setUserRating(newValue);
+    
+    // Track rating interaction
+    trackRating(product.id, newValue, {
+      category: product.category,
+      subcategory: product.subcategory,
+      price: product.price,
+      source: 'product_detail_page',
+    });
   };
 
   const handleShare = () => {
@@ -201,6 +265,26 @@ const ProductDetailPage: React.FC = () => {
                 ({product.rating.toFixed(1)})
               </Typography>
             </Box>
+
+            {/* User Rating */}
+            {currentUser && (
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="subtitle2" gutterBottom>
+                  Rate this product:
+                </Typography>
+                <Rating
+                  value={userRating}
+                  onChange={handleRatingChange}
+                  precision={1}
+                  size="large"
+                />
+                {userRating && (
+                  <Typography variant="body2" color="text.secondary">
+                    Your rating: {userRating} stars
+                  </Typography>
+                )}
+              </Box>
+            )}
 
             {/* Price */}
             <Box sx={{ mb: 3 }}>

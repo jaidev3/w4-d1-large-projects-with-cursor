@@ -16,6 +16,7 @@ import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import ProductsPage from './pages/ProductsPage';
 import ProductDetailPage from './pages/ProductDetailPage';
+import UserInteractionHistoryPage from './pages/UserInteractionHistoryPage';
 
 const theme = createTheme({
   palette: {
@@ -83,6 +84,14 @@ const AppContent: React.FC = () => {
                 element={
                   <ProtectedRoute>
                     <ProductDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/activity"
+                element={
+                  <ProtectedRoute>
+                    <UserInteractionHistoryPage />
                   </ProtectedRoute>
                 }
               />

@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .core.database import Base, engine
 from .api.products import router as products_router
 from .api.auth import router as auth_router
+from .api.interactions import router as interactions_router
 from .core.config import get_settings
 
 # Create database tables (in production, use Alembic migrations instead)
@@ -25,6 +26,7 @@ app.add_middleware(
 # Include API routers
 app.include_router(auth_router, prefix="/api")
 app.include_router(products_router, prefix="/api")
+app.include_router(interactions_router, prefix="/api")
 
 
 @app.get("/")

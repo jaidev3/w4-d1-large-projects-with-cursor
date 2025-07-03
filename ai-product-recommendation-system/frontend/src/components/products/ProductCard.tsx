@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardMedia, Typography, Button, Box, Chip, Rating } from '@mui/material';
 import { ShoppingCart as CartIcon, Favorite as FavoriteIcon, FavoriteBorder as FavoriteBorderIcon } from '@mui/icons-material';
 import type { ProductCardProps } from '../../types/product';
+import { useInteractionTracking } from '../../store/interactionsApi';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 
 const ProductCard: React.FC<ProductCardProps> = ({
   product,
@@ -11,14 +14,52 @@ const ProductCard: React.FC<ProductCardProps> = ({
   onToggleFavorite,
   isFavorite = false,
 }) => {
+  const { trackView, trackLike, trackAddToCart } = useInteractionTracking();
+  const currentUser = useSelector((state: RootState) => state.auth.user);
+
+  // Track view when component mounts (only if user is logged in)
+  useEffect(() => {
+    if (currentUser) {
+      trackView(product.id, {
+        view_type: viewType,
+        category: product.category,
+        subcategory: product.subcategory,
+        price: product.price,
+        is_featured: product.is_featured,
+        is_on_sale: product.is_on_sale,
+      });
+    }
+  }, [product.id, viewType, currentUser, trackView, product.category, product.subcategory, product.price, product.is_featured, product.is_on_sale]);
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     onAddToCart?.(product);
+    
+    // Track add to cart interaction
+    if (currentUser) {
+      trackAddToCart(product.id, 1, {
+        category: product.category,
+        subcategory: product.subcategory,
+        price: product.price,
+        is_on_sale: product.is_on_sale,
+        sale_price: product.sale_price,
+      });
+    }
   };
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
     onToggleFavorite?.(product);
+    
+    // Track like interaction (only when liking, not unliking)
+    if (currentUser && !isFavorite) {
+      trackLike(product.id, {
+        category: product.category,
+        subcategory: product.subcategory,
+        price: product.price,
+        rating: product.rating,
+      });
+    }
   };
 
   const displayPrice = product.is_on_sale && product.sale_price ? product.sale_price : product.price;

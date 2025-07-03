@@ -10,7 +10,7 @@ import {
   IconButton,
   Avatar,
 } from '@mui/material';
-import { AccountCircle, ShoppingCart, Home, Person } from '@mui/icons-material';
+import { AccountCircle, ShoppingCart, Home, Person, Timeline } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { AppDispatch, RootState } from '../../store';
@@ -41,6 +41,11 @@ const Navigation: React.FC = () => {
     handleClose();
   };
 
+  const handleActivity = () => {
+    navigate('/activity');
+    handleClose();
+  };
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -60,6 +65,9 @@ const Navigation: React.FC = () => {
               </Button>
               <Button color="inherit" onClick={() => navigate('/dashboard')}>
                 Dashboard
+              </Button>
+              <Button color="inherit" onClick={() => navigate('/activity')} startIcon={<Timeline />}>
+                Activity
               </Button>
               <Box>
                 <IconButton
@@ -92,6 +100,10 @@ const Navigation: React.FC = () => {
                   <MenuItem onClick={handleProfile}>
                     <Person sx={{ mr: 1 }} />
                     Profile
+                  </MenuItem>
+                  <MenuItem onClick={handleActivity}>
+                    <Timeline sx={{ mr: 1 }} />
+                    Activity
                   </MenuItem>
                   <MenuItem onClick={handleLogout}>
                     Logout
