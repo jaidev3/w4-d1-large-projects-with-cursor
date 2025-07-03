@@ -14,6 +14,8 @@ import UserProfile from './components/auth/UserProfile';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
+import ProductsPage from './pages/ProductsPage';
+import ProductDetailPage from './pages/ProductDetailPage';
 
 const theme = createTheme({
   palette: {
@@ -72,7 +74,15 @@ const AppContent: React.FC = () => {
                 path="/products"
                 element={
                   <ProtectedRoute>
-                    <div>Products page (coming soon)</div>
+                    <ProductsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/products/:id"
+                element={
+                  <ProtectedRoute>
+                    <ProductDetailPage />
                   </ProtectedRoute>
                 }
               />
